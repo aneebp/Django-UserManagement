@@ -8,8 +8,33 @@ from .models import Post
 @login_required(login_url='login')
 def Home(request):
     posts = Post.objects.all()
-    return render(request,"main/home.html",{"posts":posts})
 
+    if request.method == "POST":
+        #taking the id i passed in value attribute
+        post_id = request.POST.get("post_id")
+        post = Post.objects.filter(id=post_id).first()
+        if post and post.auther == request.user:
+            post.delete()
+    return render(request,"main/home.html", {"posts":posts})
+
+
+def Update_post(request,pk):
+    page = "update"
+    post = Post.objects.get(id=pk)
+    form = PostForm(instance=post)
+    if request.method == "POST":
+        form = PostForm(request.POST,instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.auther = request.user
+            post.save()
+            return redirect('home')
+    return render(request,'main/create_post.html',{"form":form,"page":page})
+
+
+
+
+ 
 def Registration(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
