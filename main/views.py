@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required,permission_required
 from django.contrib.auth import login,logout,authenticate
 from .models import Post
 from django.contrib.auth.models import User,Group
+from django.contrib import messages
 
 # Create your views here.
 @login_required(login_url='login')
